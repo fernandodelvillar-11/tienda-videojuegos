@@ -1,0 +1,34 @@
+{% extends 'videojuegosapp/base.html' %}
+
+{% block titulo %}Inicio - Tienda de Videojuegos{% endblock %}
+
+{% block contenido %}
+    <h1 class="mb-4">Catálogo de Videojuegos</h1>
+
+    {% if videojuegos %}
+        <div class="row">
+            {% for videojuego in videojuegos %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ videojuego.titulo }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ videojuego.plataforma }} · {{ videojuego.genero }}</h6>
+                            <p class="card-text">
+                                Precio: ${{ videojuego.precio }}<br>
+                                Stock: {{ videojuego.stock }}<br>
+                                Año: {{ videojuego.anio_lanzamiento }}
+                            </p>
+                        </div>
+                        <div class="card-footer d-flex justify-content-between">
+                            <a href="{% url 'detalle_videojuego' videojuego.id %}" class="btn btn-sm btn-outline-primary">Ver</a>
+                            <a href="{% url 'editar_videojuego' videojuego.id %}" class="btn btn-sm btn-outline-warning">Editar</a>
+                            <a href="{% url 'eliminar_videojuego' videojuego.id %}" class="btn btn-sm btn-outline-danger">Eliminar</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-muted">Aún no hay videojuegos registrados.</p>
+    {% endif %}
+{% endblock %}
