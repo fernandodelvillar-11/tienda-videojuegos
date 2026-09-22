@@ -1,0 +1,24 @@
+{% extends 'videojuegosapp/base.html' %}
+
+{% block titulo %}{{ videojuego.titulo }}{% endblock %}
+
+{% block contenido %}
+    <div class="card">
+        <div class="card-body">
+            <h1 class="card-title">{{ videojuego.titulo }}</h1>
+            <h5 class="card-subtitle mb-3 text-muted">{{ videojuego.plataforma }} · {{ videojuego.genero }}</h5>
+
+            <p><strong>Precio:</strong> ${{ videojuego.precio }}</p>
+            <p><strong>Stock:</strong> {{ videojuego.stock }}</p>
+            <p><strong>Año de lanzamiento:</strong> {{ videojuego.anio_lanzamiento }}</p>
+
+            {% if videojuego.descripcion %}
+                <p><strong>Descripción:</strong><br>{{ videojuego.descripcion }}</p>
+            {% endif %}
+
+            <a href="{% url 'editar_videojuego' videojuego.id %}" class="btn btn-warning">Editar</a>
+            <a href="{% url 'eliminar_videojuego' videojuego.id %}" class="btn btn-danger">Eliminar</a>
+            <a href="{% url 'inicio' %}" class="btn btn-secondary">Volver</a>
+        </div>
+    </div>
+{% endblock %}
