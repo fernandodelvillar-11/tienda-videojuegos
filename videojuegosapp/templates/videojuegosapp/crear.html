@@ -20,12 +20,12 @@
 
         <div class="mb-3">
             <label for="titulo" class="form-label">Título</label>
-            <input type="text" class="form-control" id="titulo" name="titulo" value="{{ datos.titulo }}">
+            <input type="text" class="form-control" id="titulo" name="titulo" value="{{ datos.titulo }}" maxlength="100">
         </div>
 
         <div class="mb-3">
             <label for="genero" class="form-label">Género</label>
-            <input type="text" class="form-control" id="genero" name="genero" value="{{ datos.genero }}">
+            <input type="text" class="form-control" id="genero" name="genero" value="{{ datos.genero }}" minlength="10">
         </div>
 
         <div class="mb-3">
