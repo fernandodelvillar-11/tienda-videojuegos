@@ -1,34 +1,131 @@
 {% extends 'videojuegosapp/base.html' %}
 
-{% block titulo %}Inicio - Tienda de Videojuegos{% endblock %}
+{% block titulo %}Catálogo - GameStore{% endblock %}
 
 {% block contenido %}
-    <h1 class="mb-4">Catálogo de Videojuegos</h1>
+<style>
+    .title-hover:hover {
+        color: #66c0f4 !important;
+        transition: color 0.2s;
+    }
+    .card-game {
+        background: linear-gradient(145deg, #2a475e, #1b2838);
+        border: none;
+        border-radius: 12px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+    }
+    .card-game:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 15px 25px rgba(0,0,0,0.6);
+    }
+    .price-tag {
+        background-color: #4c6b22;
+        color: #a4d007;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-weight: 800;
+        font-size: 1.1rem;
+    }
+    .img-cover {
+        height: 160px;
+        object-fit: cover;
+        opacity: 0.8;
+        transition: opacity 0.3s ease;
+    }
+    .card-game:hover .img-cover {
+        opacity: 1;
+    }
+</style>
 
-    {% if videojuegos %}
-        <div class="row">
-            {% for videojuego in videojuegos %}
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ videojuego.titulo }}</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">{{ videojuego.plataforma }} · {{ videojuego.genero }}</h6>
-                            <p class="card-text">
-                                Precio: ${{ videojuego.precio }}<br>
-                                Stock: {{ videojuego.stock }}<br>
-                                Año: {{ videojuego.anio_lanzamiento }}
-                            </p>
-                        </div>
-                        <div class="card-footer d-flex justify-content-between">
-                            <a href="{% url 'detalle_videojuego' videojuego.id %}" class="btn btn-sm btn-outline-primary">Ver</a>
-                            <a href="{% url 'editar_videojuego' videojuego.id %}" class="btn btn-sm btn-outline-warning">Editar</a>
-                            <a href="{% url 'eliminar_videojuego' videojuego.id %}" class="btn btn-sm btn-outline-danger">Eliminar</a>
-                        </div>
-                    </div>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-white fw-bold"><i class="fa-solid fa-fire text-danger me-2"></i>Destacados y Ofertas</h2>
+    <span class="text-info fw-semibold"><i class="fa-solid fa-layer-group me-2"></i>Títulos en catálogo: {{ videojuegos|length }}</span>
+</div>
+
+<!-- Grilla responsiva de videojuegos -->
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+    {% for juego in videojuegos %}
+    <div class="col">
+        <div class="card h-100 card-game shadow-sm">
+            
+            <!-- 1. IMAGEN CLICKEABLE -->
+            <a href="{% url 'detalle_videojuego' juego.id %}">
+                <img src="https://placehold.co/600x300/171a21/66c0f4?text={{ juego.titulo }}" class="card-img-top img-cover" alt="Portada de {{ juego.titulo }}">
+            </a>
+            
+            <div class="card-body d-flex flex-column text-white">
+                
+                <!-- 2. TÍTULO CLICKEABLE -->
+                <a href="{% url 'detalle_videojuego' juego.id %}" class="text-white text-decoration-none">
+                    <h5 class="card-title fw-bold text-truncate title-hover" title="{{ juego.titulo }}">{{ juego.titulo }}</h5>
+                </a>
+                
+                <!-- Año -->
+                <p class="card-text text-light small mb-2"><i class="fa-solid fa-calendar-days me-1"></i>Lanzamiento: {{ juego.anio_lanzamiento }}</p>
+
+                <!-- Iteramos los géneros -->
+                <div class="mb-2">
+                    {% for g in juego.lista_generos %}
+                        <span class="badge bg-primary opacity-75 rounded-pill me-1">{{ g }}</span>
+                    {% endfor %}
                 </div>
-            {% endfor %}
+
+                <!-- Iteramos las plataformas -->
+                <div class="mb-3">
+                    {% for p in juego.lista_plataformas %}
+                        <span class="badge bg-secondary opacity-75 rounded-pill me-1">{{ p }}</span>
+                    {% endfor %}
+                </div>
+                
+                <div class="mt-auto d-flex justify-content-between align-items-center mb-3">
+    
+                    <!-- Lógica del precio -->
+                    {% if juego.precio == 0 %}
+                        <span class="price-tag" style="background-color: #66c0f4; color: #000;">Gratis</span>
+                    {% else %}
+                        <span class="price-tag">${{ juego.precio }}</span>
+                    {% endif %}
+                    
+                    <!-- Lógica del stock -->
+                    {% if juego.stock > 0 %}
+                        <span class="badge bg-success bg-opacity-75"><i class="fa-solid fa-box me-1"></i>Stock: {{ juego.stock }}</span>
+                    {% else %}
+                        <span class="badge bg-danger"><i class="fa-solid fa-ban me-1"></i>Agotado</span>
+                    {% endif %}
+                    
+                </div>
+                
+                <!-- Botones CRUD: Editar y Eliminar -->
+                <div class="d-flex gap-2 border-top border-secondary pt-3 mt-2">
+                    <a href="{% url 'editar_videojuego' juego.id %}" class="btn btn-sm btn-outline-light w-50">
+                        <i class="fa-solid fa-pen-to-square me-1"></i>Editar
+                    </a>
+                    <a href="{% url 'eliminar_videojuego' juego.id %}" class="btn btn-sm btn-outline-danger w-50">
+                        <i class="fa-solid fa-trash me-1"></i>Borrar
+                    </a>
+                </div>
+            </div>
         </div>
-    {% else %}
-        <p class="text-muted">Aún no hay videojuegos registrados.</p>
-    {% endif %}
+    </div>
+    {% empty %}
+    <!-- Cerramos la fila de la grilla artificialmente si está vacía -->
+    </div> 
+    
+    <!-- Contenedor centrado para el mensaje de tienda vacía -->
+    <div class="d-flex justify-content-center align-items-center w-100 py-5 fade-in">
+        <div class="text-center p-5 rounded" style="background-color: rgba(27, 40, 56, 0.5); border: 1px dashed #2a475e;">
+            <i class="fa-solid fa-ghost fa-4x text-light mb-3 opacity-50"></i>
+            <h3 class="text-light fw-bold">La tienda está vacía</h3>
+            <p class="text-info mb-4">Sube el primer videojuego para comenzar a vender.</p>
+            <a href="{% url 'crear_videojuego' %}" class="btn btn-outline-info">
+                <i class="fa-solid fa-plus me-2"></i>Añadir Primer Juego
+            </a>
+        </div>
+    </div>
+    
+    <!-- Volvemos a abrir un div vacío para que el for no rompa el HTML -->
+    <div> 
+    {% endfor %}
+</div>
 {% endblock %}

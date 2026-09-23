@@ -1,17 +1,50 @@
 {% extends 'videojuegosapp/base.html' %}
 
-{% block titulo %}Eliminar {{ videojuego.titulo }}{% endblock %}
+{% block titulo %}Eliminar {{ videojuego.titulo }} - GameStore{% endblock %}
 
 {% block contenido %}
-    <h1 class="mb-4">Eliminar Videojuego</h1>
+<style>
+    .delete-card {
+        background-color: #1b2838;
+        border-top: 5px solid #dc3545; /* Borde rojo de advertencia */
+        border-radius: 10px;
+        box-shadow: 0 10px 25px rgba(220, 53, 69, 0.15); /* Sombra rojiza sutil */
+    }
+</style>
 
-    <div class="alert alert-warning">
-        ¿Estás seguro de que quieres eliminar <strong>{{ videojuego.titulo }}</strong>? Esta acción no se puede deshacer.
+<div class="row justify-content-center fade-in mt-4">
+    <div class="col-md-7 col-lg-6">
+        <div class="delete-card p-4 p-md-5 text-center">
+            
+            <!-- Icono y Título -->
+            <div class="mb-4">
+                <i class="fa-solid fa-triangle-exclamation fa-4x text-danger mb-3"></i>
+                <h2 class="text-white fw-bold">¿Eliminar Videojuego?</h2>
+            </div>
+
+            <!-- Caja de información del juego a eliminar -->
+            <div class="p-3 mb-4 rounded" style="background-color: #171a21; border: 1px solid #45151a;">
+                <p class="text-light mb-2">Estás a punto de borrar permanentemente del catálogo:</p>
+                <h3 class="text-danger fw-bold mb-1"><i class="fa-solid fa-gamepad me-2"></i>{{ videojuego.titulo }}</h3>
+                <span class="text-secondary small"><i class="fa-solid fa-desktop me-1"></i>{{ videojuego.plataforma }}</span>
+            </div>
+
+            <p class="text-secondary mb-4">Esta acción removerá el registro de la base de datos y <strong>no se puede deshacer</strong>. ¿Estás completamente seguro?</p>
+
+            <!-- Formulario de confirmación -->
+            <form method="POST">
+                {% csrf_token %}
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="{% url 'inicio' %}" class="btn btn-outline-secondary px-4 py-2">
+                        <i class="fa-solid fa-arrow-left me-2"></i>Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-danger px-4 py-2 fw-bold text-white">
+                        <i class="fa-solid fa-trash-can me-2"></i>Sí, eliminar título
+                    </button>
+                </div>
+            </form>
+            
+        </div>
     </div>
-
-    <form method="POST">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-danger">Sí, eliminar</button>
-        <a href="{% url 'detalle_videojuego' videojuego.id %}" class="btn btn-secondary">Cancelar</a>
-    </form>
+</div>
 {% endblock %}

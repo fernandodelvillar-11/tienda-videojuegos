@@ -1,93 +1,119 @@
 {% extends 'videojuegosapp/base.html' %}
 
-{% block titulo %}Agregar Videojuego{% endblock %}
+{% block titulo %}Añadir Videojuego - GameStore{% endblock %}
 
 {% block contenido %}
-    <h1 class="mb-4">Agregar Videojuego</h1>
+<style>
+    .create-card {
+        background-color: #1b2838;
+        border-top: 4px solid #66c0f4;
+        border-radius: 10px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+    }
+    .form-label { color: #c7d5e0; font-weight: 500; }
+</style>
 
-    {% if errores %}
-        <div class="alert alert-danger">
-            <ul class="mb-0">
-                {% for error in errores %}
-                    <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
+<div class="row justify-content-center fade-in">
+    <div class="col-md-8 col-lg-6">
+        <div class="create-card p-4 p-md-5">
+            <h2 class="text-white fw-bold mb-4 text-center">
+                <i class="fa-solid fa-cloud-arrow-up text-info me-2"></i>Publicar Nuevo Título
+            </h2>
+
+            {% if errores %}
+                <div class="alert alert-danger shadow-sm border-0">
+                    <ul class="mb-0">
+                        {% for error in errores %}
+                            <li><i class="fa-solid fa-triangle-exclamation me-2"></i>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label for="titulo" class="form-label"><i class="fa-solid fa-heading me-1"></i>Título del Juego</label>
+                    <input type="text" class="form-control form-control-lg" id="titulo" name="titulo" value="{{ datos.titulo }}" maxlength="100" placeholder="Ej: The Witcher 3">
+                </div>
+
+                <div class="mb-4 bg-dark p-3 rounded text-center">
+                    <label class="form-label d-block text-info mb-3"><i class="fa-solid fa-masks-theater me-1"></i>Géneros del Juego</label>
+                    
+                    <input type="checkbox" class="btn-check" id="gen_accion" name="generos" value="Acción" autocomplete="off" {% if "Acción" in generos_seleccionados %} checked{% endif %}>
+                    <label class="btn btn-outline-info btn-sm me-1 mb-2" for="gen_accion">Acción</label>
+
+                    <input type="checkbox" class="btn-check" id="gen_rpg" name="generos" value="RPG" autocomplete="off" {% if "RPG" in generos_seleccionados %} checked{% endif %}>
+                    <label class="btn btn-outline-info btn-sm me-1 mb-2" for="gen_rpg">RPG</label>
+
+                    <input type="checkbox" class="btn-check" id="gen_aventura" name="generos" value="Aventura" autocomplete="off" {% if "Aventura" in generos_seleccionados %} checked{% endif %}>
+                    <label class="btn btn-outline-info btn-sm me-1 mb-2" for="gen_aventura">Aventura</label>
+
+                    <input type="checkbox" class="btn-check" id="gen_deportes" name="generos" value="Deportes" autocomplete="off" {% if "Deportes" in generos_seleccionados %} checked{% endif %}>
+                    <label class="btn btn-outline-info btn-sm me-1 mb-2" for="gen_deportes">Deportes</label>
+
+                    <input type="checkbox" class="btn-check" id="gen_shooter" name="generos" value="Shooter" autocomplete="off" {% if "Shooter" in generos_seleccionados %} checked{% endif %}>
+                    <label class="btn btn-outline-info btn-sm me-1 mb-2" for="gen_shooter">Shooter</label>
+                </div>
+
+                <div class="mb-4 bg-dark p-3 rounded text-center">
+                    <label class="form-label d-block text-info mb-3">Plataformas Disponibles</label>
+                    
+                    <input type="checkbox" class="btn-check" id="plat_pc" name="plataformas" value="PC" autocomplete="off" {% if "PC" in plataformas_seleccionadas %} checked{% endif %}>
+                    <label class="btn btn-outline-info me-1 mb-2" for="plat_pc"><i class="fa-solid fa-computer me-1"></i>PC</label>
+
+                    <input type="checkbox" class="btn-check" id="plat_ps5" name="plataformas" value="PlayStation 5" autocomplete="off" {% if "PlayStation 5" in plataformas_seleccionadas %} checked{% endif %}>
+                    <label class="btn btn-outline-info me-1 mb-2" for="plat_ps5"><i class="fa-brands fa-playstation me-1"></i>PS5</label>
+
+                    <input type="checkbox" class="btn-check" id="plat_ps4" name="plataformas" value="PlayStation 4" autocomplete="off" {% if "PlayStation 4" in plataformas_seleccionadas %} checked{% endif %}>
+                    <label class="btn btn-outline-info me-1 mb-2" for="plat_ps4"><i class="fa-brands fa-playstation me-1"></i>PS4</label>
+
+                    <input type="checkbox" class="btn-check" id="plat_xss" name="plataformas" value="Xbox Series X/S" autocomplete="off" {% if "Xbox Series X/S" in plataformas_seleccionadas %} checked{% endif %}>
+                    <label class="btn btn-outline-info me-1 mb-2" for="plat_xss"><i class="fa-brands fa-xbox me-1"></i>Xbox X/S</label>
+
+                    <input type="checkbox" class="btn-check" id="plat_xone" name="plataformas" value="Xbox One" autocomplete="off" {% if "Xbox One" in plataformas_seleccionadas %} checked{% endif %}>
+                    <label class="btn btn-outline-info me-1 mb-2" for="plat_xone"><i class="fa-brands fa-xbox me-1"></i>Xbox One</label>
+
+                    <input type="checkbox" class="btn-check" id="plat_switch" name="plataformas" value="Nintendo Switch" autocomplete="off" {% if "Nintendo Switch" in plataformas_seleccionadas %} checked{% endif %}>
+                    <label class="btn btn-outline-info me-1 mb-2" for="plat_switch">Switch</label>
+
+                    <input type="checkbox" class="btn-check" id="plat_movil" name="plataformas" value="Móvil" autocomplete="off" {% if "Móvil" in plataformas_seleccionadas %} checked{% endif %}>
+                    <label class="btn btn-outline-info me-1 mb-2" for="plat_movil"><i class="fa-solid fa-mobile-screen me-1"></i>Móvil</label>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="precio" class="form-label">Precio ($)</label>
+                        <input type="number" step="0.01" min="0" max="999999.99" class="form-control" id="precio" name="precio" value="{{ datos.precio }}">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="stock" class="form-label">Stock</label>
+                        <input type="number" min="0" class="form-control" id="stock" name="stock" value="{{ datos.stock }}">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="anio_lanzamiento" class="form-label">Año</label>
+                        <input type="number" min="1970" max="2100" class="form-control" id="anio_lanzamiento" name="anio_lanzamiento" value="{{ datos.anio_lanzamiento }}">
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="descripcion" class="form-label">Descripción Detallada</label>
+                    <textarea class="form-control" id="descripcion" name="descripcion" rows="4" maxlength="300">{{ datos.descripcion }}</textarea>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-cyber py-2 fs-5"><i class="fa-solid fa-upload me-2"></i>Publicar Videojuego</button>
+                    <a href="{% url 'inicio' %}" class="btn btn-outline-secondary">Cancelar y volver</a>
+                </div>
+            </form>
         </div>
-    {% endif %}
+    </div>
+</div>
 
-    <form method="POST">
-        {% csrf_token %}
-
-        <div class="mb-3">
-            <label for="titulo" class="form-label">Título</label>
-            <input type="text" class="form-control" id="titulo" name="titulo" value="{{ datos.titulo }}" maxlength="100">
-        </div>
-
-        <div class="mb-3">
-            <label for="genero" class="form-label">Género</label>
-            <input type="text" class="form-control" id="genero" name="genero" value="{{ datos.genero }}" maxlength="50">
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label d-block">Plataformas</label>
-            <input type="checkbox" class="btn-check" id="plat_pc" name="plataformas" value="PC" autocomplete="off" {% if "PC" in plataformas_seleccionadas %} checked{% endif %}>
-            <label class="btn btn-outline-primary me-2 mb-2" for="plat_pc">PC</label>
-
-            <input type="checkbox" class="btn-check" id="plat_ps5" name="plataformas" value="PlayStation 5" autocomplete="off" {% if "PlayStation 5" in plataformas_seleccionadas %} checked{% endif %}>
-            <label class="btn btn-outline-primary me-2 mb-2" for="plat_ps5">PlayStation 5</label>
-
-            <input type="checkbox" class="btn-check" id="plat_ps4" name="plataformas" value="PlayStation 4" autocomplete="off" {% if "PlayStation 4" in plataformas_seleccionadas %} checked{% endif %}>
-            <label class="btn btn-outline-primary me-2 mb-2" for="plat_ps4">PlayStation 4</label>
-
-            <input type="checkbox" class="btn-check" id="plat_xss" name="plataformas" value="Xbox Series X/S" autocomplete="off" {% if "Xbox Series X/S" in plataformas_seleccionadas %} checked{% endif %}>
-            <label class="btn btn-outline-primary me-2 mb-2" for="plat_xss">Xbox Series X/S</label>
-
-            <input type="checkbox" class="btn-check" id="plat_xone" name="plataformas" value="Xbox One" autocomplete="off" {% if "Xbox One" in plataformas_seleccionadas %} checked{% endif %}>
-            <label class="btn btn-outline-primary me-2 mb-2" for="plat_xone">Xbox One</label>
-
-            <input type="checkbox" class="btn-check" id="plat_switch" name="plataformas" value="Nintendo Switch" autocomplete="off" {% if "Nintendo Switch" in plataformas_seleccionadas %} checked{% endif %}>
-            <label class="btn btn-outline-primary me-2 mb-2" for="plat_switch">Nintendo Switch</label>
-
-            <input type="checkbox" class="btn-check" id="plat_movil" name="plataformas" value="Móvil" autocomplete="off" {% if "Móvil" in plataformas_seleccionadas %} checked{% endif %}>
-            <label class="btn btn-outline-primary me-2 mb-2" for="plat_movil">Móvil</label>
-        </div>
-
-        <div class="mb-3">
-            <label for="precio" class="form-label">Precio</label>
-            <input type="number" step="0.01" min="0.01" max="999999.99" class="form-control" id="precio" name="precio" value="{{ datos.precio }}">
-        </div>
-
-        <div class="mb-3">
-            <label for="stock" class="form-label">Stock</label>
-            <input type="number" min="0" class="form-control" id="stock" name="stock" value="{{ datos.stock }}">
-        </div>
-
-        <div class="mb-3">
-            <label for="anio_lanzamiento" class="form-label">Año de lanzamiento</label>
-            <input type="number" min="1970" max="2100" class="form-control" id="anio_lanzamiento" name="anio_lanzamiento" value="{{ datos.anio_lanzamiento }}">
-        </div>
-
-        <div class="mb-3">
-            <label for="descripcion" class="form-label">Descripción</label>
-            <textarea class="form-control" id="descripcion" name="descripcion" rows="3" maxlength="300">{{ datos.descripcion }}</textarea>
-        </div>
-
-        <button type="submit" class="btn btn-success">Guardar</button>
-        <a href="{% url 'inicio' %}" class="btn btn-secondary">Cancelar</a>
-    </form>
-
-    <script>
-    document.getElementById('precio').addEventListener('input', function() {
-        if (this.value > 999999.99) this.value = 999999.99;
-    });
-
-    document.getElementById('stock').addEventListener('input', function() {
-        if (this.value < 0) this.value = 0;
-        if (this.value > 1000000) this.value = 1000000;
-    });
-
-    document.getElementById('anio_lanzamiento').addEventListener('input', function() {
-    if (this.value > 2100) this.value = 2100;
-    });
-    </script>
+<script>
+    document.getElementById('precio').addEventListener('input', function() { if (this.value > 999999.99) this.value = 999999.99; });
+    document.getElementById('stock').addEventListener('input', function() { if (this.value < 0) this.value = 0; if (this.value > 1000000) this.value = 1000000; });
+    document.getElementById('anio_lanzamiento').addEventListener('input', function() { if (this.value > 2100) this.value = 2100; });
+</script>
 {% endblock %}

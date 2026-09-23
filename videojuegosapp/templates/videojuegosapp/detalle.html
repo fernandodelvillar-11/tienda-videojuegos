@@ -1,24 +1,113 @@
 {% extends 'videojuegosapp/base.html' %}
 
-{% block titulo %}{{ videojuego.titulo }}{% endblock %}
+{% block titulo %}{{ videojuego.titulo }} - GameStore{% endblock %}
 
 {% block contenido %}
-    <div class="card">
-        <div class="card-body">
-            <h1 class="card-title">{{ videojuego.titulo }}</h1>
-            <h5 class="card-subtitle mb-3 text-muted">{{ videojuego.plataforma }} · {{ videojuego.genero }}</h5>
+<style>
+    .detail-header {
+        /* Cabecera inmersiva con gradiente oscuro sobre la imagen */
+        background: linear-gradient(0deg, #171a21 0%, rgba(27,40,56,0.5) 100%), url('https://placehold.co/1200x400/1b2838/66c0f4?text={{ videojuego.titulo }}') center/cover;
+        border-radius: 12px;
+        padding: 5rem 2rem 2rem 2rem;
+        margin-bottom: 2rem;
+        box-shadow: inset 0 -50px 50px -20px #171a21;
+    }
+    .info-box {
+        background-color: rgba(0, 0, 0, 0.4);
+        border-radius: 8px;
+        padding: 1.5rem;
+        border: 1px solid #2a475e;
+    }
+    .price-badge-large {
+        background-color: #4c6b22;
+        color: #a4d007;
+        font-size: 1.8rem;
+        font-weight: 800;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+    }
+</style>
 
-            <p><strong>Precio:</strong> ${{ videojuego.precio }}</p>
-            <p><strong>Stock:</strong> {{ videojuego.stock }}</p>
-            <p><strong>Año de lanzamiento:</strong> {{ videojuego.anio_lanzamiento }}</p>
-
-            {% if videojuego.descripcion %}
-                <p><strong>Descripción:</strong><br>{{ videojuego.descripcion }}</p>
-            {% endif %}
-
-            <a href="{% url 'editar_videojuego' videojuego.id %}" class="btn btn-warning">Editar</a>
-            <a href="{% url 'eliminar_videojuego' videojuego.id %}" class="btn btn-danger">Eliminar</a>
-            <a href="{% url 'inicio' %}" class="btn btn-secondary">Volver</a>
+<!-- Título inmersivo -->
+<div class="row fade-in">
+    <div class="col-12">
+        <div class="detail-header d-flex align-items-end">
+            <h1 class="display-4 fw-bold text-white mb-0" style="text-shadow: 2px 2px 8px #000;">{{ videojuego.titulo }}</h1>
         </div>
     </div>
+</div>
+
+<div class="row fade-in">
+    <!-- Columna Izquierda: Descripción -->
+    <div class="col-lg-8 mb-4">
+        <h3 class="fw-bold mb-3 text-white"><i class="fa-solid fa-book-open text-info me-2"></i>Acerca de este juego</h3>
+        <div class="info-box text-light">
+            <p class="fs-5" style="white-space: pre-line; line-height: 1.6;">
+                {% if videojuego.descripcion %}
+                    {{ videojuego.descripcion }}
+                {% else %}
+                    <span class="text-muted">No hay descripción disponible para este título en la biblioteca.</span>
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <!-- Columna Derecha: Panel de Compra y Detalles Técnicos -->
+    <div class="col-lg-4">
+        <div class="info-box text-light sticky-top" style="top: 20px;">
+            
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                {% if videojuego.precio == 0 %}
+                    <span class="price-badge-large" style="background-color: #66c0f4; color: #000;">Gratis</span>
+                {% else %}
+                    <span class="price-badge-large">${{ videojuego.precio }}</span>
+                {% endif %}
+            </div>
+
+            <div class="mb-4 text-center">
+                {% if videojuego.stock > 0 %}
+                    <span class="badge bg-success bg-opacity-75 fs-6 p-2 w-100"><i class="fa-solid fa-box-open me-2"></i>En Stock: {{ videojuego.stock }} unidades</span>
+                {% else %}
+                    <span class="badge bg-danger fs-6 p-2 w-100"><i class="fa-solid fa-ban me-2"></i>Agotado</span>
+                {% endif %}
+            </div>
+
+            <hr class="border-secondary mb-4">
+
+            <!-- Ficha Técnica -->
+            <ul class="list-unstyled mb-4">
+                <li class="mb-3 border-bottom border-dark pb-2">
+                    <strong class="text-secondary d-block mb-2"><i class="fa-solid fa-gamepad me-2"></i>Géneros:</strong> 
+                    <div class="text-end">
+                        {% for g in videojuego.lista_generos %}
+                            <span class="badge bg-primary opacity-75 rounded-pill">{{ g }}</span>
+                        {% endfor %}
+                    </div>
+                </li>
+                <li class="mb-3 border-bottom border-dark pb-2">
+                    <strong class="text-secondary"><i class="fa-solid fa-calendar-days me-2"></i>Lanzamiento:</strong> 
+                    <span class="float-end fw-bold text-light">{{ videojuego.anio_lanzamiento }}</span>
+                </li>
+                <li class="mb-3">
+                    <strong class="text-secondary d-block mb-2"><i class="fa-solid fa-desktop me-2"></i>Plataformas disponibles:</strong> 
+                    <div class="text-end">
+                        {% for p in videojuego.lista_plataformas %}
+                            <span class="badge bg-secondary opacity-75 rounded-pill mb-1">{{ p }}</span>
+                        {% endfor %}
+                    </div>
+                </li>
+            </ul>
+
+            <!-- Controles -->
+            <div class="d-grid gap-2 mt-4">
+                <a href="{% url 'editar_videojuego' videojuego.id %}" class="btn btn-outline-info py-2">
+                    <i class="fa-solid fa-pen-to-square me-2"></i>Editar Información
+                </a>
+                <a href="{% url 'inicio' %}" class="btn btn-secondary py-2 mt-2">
+                    <i class="fa-solid fa-arrow-left me-2"></i>Volver a la Tienda
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
