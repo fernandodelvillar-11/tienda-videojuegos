@@ -1,0 +1,17 @@
+{% extends 'videojuegosapp/base.html' %}
+
+{% block titulo %}Eliminar {{ videojuego.titulo }}{% endblock %}
+
+{% block contenido %}
+    <h1 class="mb-4">Eliminar Videojuego</h1>
+
+    <div class="alert alert-warning">
+        ¿Estás seguro de que quieres eliminar <strong>{{ videojuego.titulo }}</strong>? Esta acción no se puede deshacer.
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+        <a href="{% url 'detalle_videojuego' videojuego.id %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+{% endblock %}
