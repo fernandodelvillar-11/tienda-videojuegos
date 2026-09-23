@@ -2,18 +2,18 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import Videojuego
 
-
 def inicio(request):
-    videojuego = Videojuego.objects.all()
-    return render (request, 'videojuegosapp/inicio.html', {
-        'videojuegos' : videojuego
+    videojuegos = Videojuego.objects.all()
+    return render(request, 'videojuegosapp/inicio.html', {
+        'videojuegos': videojuegos
     })
 
 def crear_videojuego(request):
     if request.method == 'POST':
         titulo = request.POST.get('titulo', '').strip()
         genero = request.POST.get('genero', '').strip()
-        plataforma = request.POST.get('plataforma', '').strip()
+        plataformas_seleccionadas = request.POST.getlist('plataformas')
+        plataforma = ', '.join(plataformas_seleccionadas)
         precio = request.POST.get('precio', '')
         stock = request.POST.get('stock', '')
         anio_lanzamiento = request.POST.get('anio_lanzamiento', '')
@@ -21,15 +21,16 @@ def crear_videojuego(request):
 
         errores = []
 
-        # Campos obligatorios
+        # Validaciones requeridas
         if not titulo:
             errores.append('El título es obligatorio.')
         if not genero:
             errores.append('El género es obligatorio.')
-        if not plataforma:
-            errores.append('La plataforma es obligatoria.')
+        if not plataformas_seleccionadas:
+            errores.append('Debes seleccionar al menos una plataforma.')
+        if len(descripcion) > 300:
+            errores.append('La descripción no puede tener más de 300 caracteres.')
 
-        # Precio: numérico y mayor que 0
         try:
             precio = float(precio)
             if precio <= 0:
@@ -37,7 +38,6 @@ def crear_videojuego(request):
         except ValueError:
             errores.append('El precio debe ser un número válido.')
 
-        # Stock: numérico y no negativo
         try:
             stock = int(stock)
             if stock < 0:
@@ -45,7 +45,6 @@ def crear_videojuego(request):
         except ValueError:
             errores.append('El stock debe ser un número entero válido.')
 
-        # Año: numérico y dentro de un rango razonable
         try:
             anio_lanzamiento = int(anio_lanzamiento)
             if anio_lanzamiento < 1970 or anio_lanzamiento > 2100:
@@ -56,7 +55,8 @@ def crear_videojuego(request):
         if errores:
             return render(request, 'videojuegosapp/crear.html', {
                 'errores': errores,
-                'datos': request.POST  # para no perder lo que ya escribió
+                'datos': request.POST,
+                'plataformas_seleccionadas': plataformas_seleccionadas # ¡Agregado para persistir selecciones si hay error!
             })
 
         Videojuego.objects.create(
@@ -84,7 +84,8 @@ def editar_videojuego(request, id):
     if request.method == 'POST':
         titulo = request.POST.get('titulo', '').strip()
         genero = request.POST.get('genero', '').strip()
-        plataforma = request.POST.get('plataforma', '').strip()
+        plataformas_seleccionadas = request.POST.getlist('plataformas')
+        plataforma = ', '.join(plataformas_seleccionadas)
         precio = request.POST.get('precio', '')
         stock = request.POST.get('stock', '')
         anio_lanzamiento = request.POST.get('anio_lanzamiento', '')
@@ -96,8 +97,10 @@ def editar_videojuego(request, id):
             errores.append('El título es obligatorio.')
         if not genero:
             errores.append('El género es obligatorio.')
-        if not plataforma:
-            errores.append('La plataforma es obligatoria.')
+        if not plataformas_seleccionadas:
+            errores.append('Debes seleccionar al menos una plataforma.')
+        if len(descripcion) > 300:
+            errores.append('La descripción no puede tener más de 300 caracteres.')
 
         try:
             precio = float(precio)
@@ -123,7 +126,8 @@ def editar_videojuego(request, id):
         if errores:
             return render(request, 'videojuegosapp/editar.html', {
                 'videojuego': videojuego,
-                'errores': errores
+                'errores': errores,
+                'plataformas_seleccionadas': plataformas_seleccionadas # Mantiene los checks en caso de error
             })
 
         videojuego.titulo = titulo
@@ -136,8 +140,13 @@ def editar_videojuego(request, id):
         videojuego.save()
         return redirect('inicio')
 
+    # ¡ESTA ES LA PARTE CRUCIAL PARA LA PETICIÓN GET!
+    # Convertimos el string de la base de datos de vuelta a una lista
+    lista_plataformas = videojuego.plataforma.split(', ') if videojuego.plataforma else []
+
     return render(request, 'videojuegosapp/editar.html', {
-        'videojuego': videojuego
+        'videojuego': videojuego,
+        'plataformas_seleccionadas': lista_plataformas # Enviamos la lista al template
     })
 
 def eliminar_videojuego(request, id):
@@ -150,9 +159,3 @@ def eliminar_videojuego(request, id):
     return render(request, 'videojuegosapp/eliminar.html', {
         'videojuego': videojuego
     })
-
-
-
-
-
-        

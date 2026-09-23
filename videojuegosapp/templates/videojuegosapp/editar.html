@@ -28,32 +28,72 @@
             <input type="text" class="form-control" id="genero" name="genero" value="{{ videojuego.genero }}" maxlength="50">
         </div>
 
+        <!-- INICIO DE CAMPO PLATAFORMAS ACTUALIZADO -->
         <div class="mb-3">
-            <label for="plataforma" class="form-label">Plataforma</label>
-            <input type="text" class="form-control" id="plataforma" name="plataforma" value="{{ videojuego.plataforma }}" maxlength="50">
+            <label class="form-label d-block">Plataformas</label>
+            <input type="checkbox" class="btn-check" id="plat_pc" name="plataformas" value="PC" autocomplete="off" {% if "PC" in plataformas_seleccionadas %} checked{% endif %}>
+            <label class="btn btn-outline-primary me-2 mb-2" for="plat_pc">PC</label>
+
+            <input type="checkbox" class="btn-check" id="plat_ps5" name="plataformas" value="PlayStation 5" autocomplete="off" {% if "PlayStation 5" in plataformas_seleccionadas %} checked{% endif %}>
+            <label class="btn btn-outline-primary me-2 mb-2" for="plat_ps5">PlayStation 5</label>
+
+            <input type="checkbox" class="btn-check" id="plat_ps4" name="plataformas" value="PlayStation 4" autocomplete="off" {% if "PlayStation 4" in plataformas_seleccionadas %} checked{% endif %}>
+            <label class="btn btn-outline-primary me-2 mb-2" for="plat_ps4">PlayStation 4</label>
+
+            <input type="checkbox" class="btn-check" id="plat_xss" name="plataformas" value="Xbox Series X/S" autocomplete="off" {% if "Xbox Series X/S" in plataformas_seleccionadas %} checked{% endif %}>
+            <label class="btn btn-outline-primary me-2 mb-2" for="plat_xss">Xbox Series X/S</label>
+
+            <input type="checkbox" class="btn-check" id="plat_xone" name="plataformas" value="Xbox One" autocomplete="off" {% if "Xbox One" in plataformas_seleccionadas %} checked{% endif %}>
+            <label class="btn btn-outline-primary me-2 mb-2" for="plat_xone">Xbox One</label>
+
+            <input type="checkbox" class="btn-check" id="plat_switch" name="plataformas" value="Nintendo Switch" autocomplete="off" {% if "Nintendo Switch" in plataformas_seleccionadas %} checked{% endif %}>
+            <label class="btn btn-outline-primary me-2 mb-2" for="plat_switch">Nintendo Switch</label>
+
+            <input type="checkbox" class="btn-check" id="plat_movil" name="plataformas" value="Móvil" autocomplete="off" {% if "Móvil" in plataformas_seleccionadas %} checked{% endif %}>
+            <label class="btn btn-outline-primary me-2 mb-2" for="plat_movil">Móvil</label>
         </div>
+        <!-- FIN DE CAMPO PLATAFORMAS -->
 
         <div class="mb-3">
             <label for="precio" class="form-label">Precio</label>
-            <input type="number" step="0.01" class="form-control" id="precio" name="precio" value="{{ videojuego.precio }}">
+            <!-- Se agregó min y max para mantener la validación -->
+            <input type="number" step="0.01" min="0.01" max="999999.99" class="form-control" id="precio" name="precio" value="{{ videojuego.precio }}">
         </div>
 
         <div class="mb-3">
             <label for="stock" class="form-label">Stock</label>
-            <input type="number" class="form-control" id="stock" name="stock" value="{{ videojuego.stock }}">
+            <!-- Se agregó min para mantener la validación -->
+            <input type="number" min="0" class="form-control" id="stock" name="stock" value="{{ videojuego.stock }}">
         </div>
 
         <div class="mb-3">
             <label for="anio_lanzamiento" class="form-label">Año de lanzamiento</label>
-            <input type="number" class="form-control" id="anio_lanzamiento" name="anio_lanzamiento" value="{{ videojuego.anio_lanzamiento }}">
+            <!-- Se agregó min y max para mantener la validación -->
+            <input type="number" min="1970" max="2100" class="form-control" id="anio_lanzamiento" name="anio_lanzamiento" value="{{ videojuego.anio_lanzamiento }}">
         </div>
 
         <div class="mb-3">
             <label for="descripcion" class="form-label">Descripción</label>
-            <textarea class="form-control" id="descripcion" name="descripcion" rows="3">{{ videojuego.descripcion }}</textarea>
+            <!-- CORRECCIÓN: Se cambió datos.descripcion por videojuego.descripcion -->
+            <textarea class="form-control" id="descripcion" name="descripcion" rows="3" maxlength="300">{{ videojuego.descripcion }}</textarea>
         </div>
 
         <button type="submit" class="btn btn-warning">Guardar cambios</button>
         <a href="{% url 'detalle_videojuego' videojuego.id %}" class="btn btn-secondary">Cancelar</a>
     </form>
+
+    <script>
+    document.getElementById('precio').addEventListener('input', function() {
+        if (this.value > 999999.99) this.value = 999999.99;
+    });
+
+    document.getElementById('stock').addEventListener('input', function() {
+        if (this.value < 0) this.value = 0;
+        if (this.value > 1000000) this.value = 1000000;
+    });
+
+    document.getElementById('anio_lanzamiento').addEventListener('input', function() {
+    if (this.value > 2100) this.value = 2100;
+    });
+    </script>
 {% endblock %}
