@@ -130,9 +130,9 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Configuraciones de Autenticación
-LOGIN_REDIRECT_URL = 'inicio'  
-LOGOUT_REDIRECT_URL = 'login'
-LOGIN_URL = 'login'
+LOGIN_URL = 'login'              # Nombre de la URL de login o path '/login/'
+LOGIN_REDIRECT_URL = 'inicio'     # Dónde va el usuario tras hacer login exitoso
+LOGOUT_REDIRECT_URL = 'login'    # Dónde va el usuario tras hacer logout
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -142,3 +142,4 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
 }
+

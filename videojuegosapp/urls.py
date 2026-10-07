@@ -4,11 +4,16 @@ from django.contrib.auth import views as auth_views
 from .views import LoginAPIView, VideojuegoAPIView
 
 urlpatterns = [
+    # Ruta raíz redirige a la vista de inicio
+    path('', views.inicio, name='inicio'),
+    
+    # Ruta alternativa para entrar mediante /inicio/
+    path('inicio/', views.inicio),
+    
     path('login/', auth_views.LoginView.as_view(template_name='videojuegosapp/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('', views.inicio, name = 'inicio'),
-    path('crear/', views.crear_videojuego, name = 'crear_videojuego'),
-    path('videojuego/<int:id>/', views.detalle_videojuego, name = 'detalle_videojuego'),
+    path('crear/', views.crear_videojuego, name='crear_videojuego'),
+    path('videojuego/<int:id>/', views.detalle_videojuego, name='detalle_videojuego'),
     path('videojuego/<int:id>/editar/', views.editar_videojuego, name='editar_videojuego'),
     path('videojuego/<int:id>/eliminar/', views.eliminar_videojuego, name='eliminar_videojuego'),
     path('api/login/', LoginAPIView.as_view(), name='api_login'),
