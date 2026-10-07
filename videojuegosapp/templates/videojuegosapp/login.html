@@ -1,35 +1,36 @@
 {% extends 'videojuegosapp/base.html' %}
 
-{% block content %}
+{% block contenido %}
 <div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card bg-dark text-light border-secondary">
-                <div class="card-header border-secondary text-center">
+        <div class="col-md-5">
+            <div class="card bg-dark text-light border-secondary shadow">
+                <div class="card-header border-secondary text-center py-3">
                     <h4><i class="fa-solid fa-user me-2"></i>Iniciar Sesión</h4>
                 </div>
-                <div class="card-body">
-                    <!-- Aquí Django mostrará los errores si el usuario o clave son incorrectos -->
+                <div class="card-body p-4">
+                    
                     {% if form.errors %}
                         <div class="alert alert-danger">
                             Usuario o contraseña incorrectos. Inténtalo de nuevo.
                         </div>
                     {% endif %}
 
-                    <form method="POST">
+                    <form method="post">
                         {% csrf_token %}
                         <div class="mb-3">
                             <label for="id_username" class="form-label">Nombre de Usuario</label>
-                            <input type="text" name="username" class="form-control" id="id_username" required>
+                            <input type="text" name="username" class="form-control bg-dark text-light border-secondary" id="id_username" maxlength="50" required>
                         </div>
                         <div class="mb-3">
                             <label for="id_password" class="form-label">Contraseña</label>
-                            <input type="password" name="password" class="form-control" id="id_password" required>
+                            <input type="password" name="password" class="form-control bg-dark text-light border-secondary" id="id_password" maxlength="50" required>
                         </div>
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-warning">Ingresar</button>
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-warning fw-bold">Ingresar</button>
                         </div>
                     </form>
+
                 </div>
             </div>
         </div>

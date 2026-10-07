@@ -9,6 +9,12 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.authtoken.models import Token
 
+from .serializers import VideojuegoSerializer
+from rest_framework.permissions import IsAuthenticated
+
+from django.contrib.auth.decorators import login_required
+
+@login_required
 def inicio(request):
     videojuegos = Videojuego.objects.all()
     
@@ -20,7 +26,8 @@ def inicio(request):
     return render(request, 'videojuegosapp/inicio.html', {
         'videojuegos': videojuegos
     })
-
+    
+@login_required
 def crear_videojuego(request):
     if request.method == 'POST':
         titulo = request.POST.get('titulo', '').strip()
@@ -85,6 +92,7 @@ def crear_videojuego(request):
 
     return render(request, 'videojuegosapp/crear.html')
 
+@login_required
 def detalle_videojuego(request, id):
     videojuego = Videojuego.objects.get(id=id)
     # Dividimos para el detalle también
@@ -95,6 +103,7 @@ def detalle_videojuego(request, id):
         'videojuego': videojuego
     })
 
+@login_required
 def editar_videojuego(request, id):
     videojuego = Videojuego.objects.get(id=id)
 
@@ -169,6 +178,7 @@ def editar_videojuego(request, id):
         'generos_seleccionados': lista_generos
     })
 
+@login_required
 def eliminar_videojuego(request, id):
     videojuego = Videojuego.objects.get(id=id)
     if request.method == 'POST':
@@ -195,3 +205,21 @@ class LoginAPIView(APIView):
         
         # Si las credenciales son falsas, rechazamos la petición
         return Response({'error': 'Credenciales inválidas'}, status=status.HTTP_401_UNAUTHORIZED)
+    
+class VideojuegoAPIView(APIView):
+    # Aquí exigimos estrictamente que el usuario tenga un token válido
+    permission_classes = [IsAuthenticated]
+
+    # GET: Lista todos los videojuegos
+    def get(self, request):
+        videojuegos = Videojuego.objects.all()
+        serializer = VideojuegoSerializer(videojuegos, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    # POST: Crea un nuevo videojuego
+    def post(self, request):
+        serializer = VideojuegoSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
