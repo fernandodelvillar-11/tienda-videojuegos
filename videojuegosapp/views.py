@@ -2,6 +2,13 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import Videojuego
 
+from django.contrib.auth import authenticate
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import AllowAny
+from rest_framework.authtoken.models import Token
+
 def inicio(request):
     videojuegos = Videojuego.objects.all()
     
@@ -168,3 +175,23 @@ def eliminar_videojuego(request, id):
         videojuego.delete()
         return redirect('inicio')
     return render(request, 'videojuegosapp/eliminar.html', {'videojuego': videojuego})
+
+class LoginAPIView(APIView):
+    # AllowAny permite que cualquiera intente loguearse para pedir un token
+    permission_classes = [AllowAny] 
+
+    def post(self, request):
+        # Rescatamos las credenciales enviadas en el JSON
+        username = request.data.get('username')
+        password = request.data.get('password')
+        
+        # Django verifica si el usuario y clave coinciden en MySQL
+        user = authenticate(username=username, password=password)
+
+        if user:
+            # Si es válido, generamos o recuperamos su token único
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({'token': token.key}, status=status.HTTP_200_OK)
+        
+        # Si las credenciales son falsas, rechazamos la petición
+        return Response({'error': 'Credenciales inválidas'}, status=status.HTTP_401_UNAUTHORIZED)
