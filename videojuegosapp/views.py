@@ -116,15 +116,15 @@ def editar_videojuego(request, id):
 
         try:
             precio = float(precio)
-            if precio < 0:
-                errores.append('El precio no puede ser negativo.')
+            if precio < 0 or precio > 999999.99:
+                errores.append('El precio debe estar entre 0 y 999,999.99.')
         except ValueError:
             errores.append('El precio debe ser un número válido.')
 
         try:
             stock = int(stock)
-            if stock < 0:
-                errores.append('El stock no puede ser negativo.')
+            if stock < 0 or stock > 999999:
+                errores.append('El stock debe estar entre 0 y 999,999.')
         except ValueError:
             errores.append('El stock debe ser un número entero válido.')
 
